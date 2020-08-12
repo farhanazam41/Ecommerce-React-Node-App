@@ -1,12 +1,15 @@
 import React from 'react';
-import Layout from '../core/Layout';
+import Authlayout from '../core/Authlayout';
 import {API} from '../config';
+import SignUp from '../pages/signuppage';
+
 
 const Singup = () => {
     return (
-        <Layout title='SignUp Page' description='Please Sign up to Purchase products'>
-        {API}....
-        </Layout>
+         <Authlayout>
+        <SignUp  />
+        </Authlayout>
+        
     )
 }
 
