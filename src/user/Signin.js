@@ -1,10 +1,11 @@
 import React from 'react';
 import Authlayout from '../core/Authlayout';
+import SignIn from '../pages/signinpage';
 
 const Signin = () => {
     return ( 
-        <Authlayout title='Signin Page' description='Please Sign in to Purchase products'>
-        ....
+        <Authlayout>
+        <SignIn/>
         </Authlayout>
     )
 }
