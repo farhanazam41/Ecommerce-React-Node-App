@@ -12,17 +12,13 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-const Layout = ({title='Title', description="Description", className, children}) => {
+const Authlayout = ({title='Title', description="Description", className, children}) => {
     
     const classes = useStyles();
 
     return (
        <div >
        <Menu/>
-        <div className='jumbotron jumbotron-fluid'>
-        <h2>{title}</h2>
-        <p className='lead'>{description}</p>
-        </div>
         <div className={className}>{children}</div>
         <div>
         <StickyFooter/>
@@ -32,4 +28,4 @@ const Layout = ({title='Title', description="Description", className, children})
     )
 }
 
-export default Layout;
+export default Authlayout;
