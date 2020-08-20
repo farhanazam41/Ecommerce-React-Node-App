@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -12,8 +12,15 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert'
 
+import {signin, authenticate} from '../auth';
+import { Redirect } from 'react-router-dom';
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 
 const useStyles = makeStyles((theme) => ({
@@ -39,8 +46,81 @@ const useStyles = makeStyles((theme) => ({
 export default function SignIn() {
   const classes = useStyles();
 
+  const [open, setOpen] = useState(false);
+  const [values , setValues] = useState({
+    
+    email:'',
+    password: '',
+    error: '',
+    loading: false,
+    redirectToReferrer: false,
+  });
+
+
+  // closing fucntion for snackbar 
+  const handleClose = ( reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  const {email,password,error,loading,redirectToReferrer} = values;
+
+  const handleChange = name => event => {
+    setValues({...values, error: false, [name]: event.target.value});
+  }
+
+  
+
+  const onSubmit = (event) => {
+   
+    event.preventDefault();
+    setValues({...values, error: false, loading: true });
+    signin({email,password})
+    .then(data => {
+      if(data.error) {
+        setValues({...values, error: data.error, loading: false});
+        
+      }
+      else {
+        
+        authenticate(data,
+          () => {
+            setValues({...values, 
+              redirectToReferrer: true
+              
+            }) ;
+          });
+      setOpen(true);
+      
+         }
+      
+    });
+};
+ 
+  const showError = () => (
+    <div className='alert alert-danger' style={{display: error ? "" : 'none'}}>
+     {error}
+    </div>
+  );
+
+  const showLoading =() => 
+  loading && (<div>Loading...</div>);
+
+  const redirectUser = () => {
+    if(redirectToReferrer) {
+      return <Redirect to ='/'/>
+    }
+  };
+
   return (
     <Container component="main" maxWidth="xs">
+    {showError()}
+    {showLoading()}
+    
+    
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
@@ -60,6 +140,10 @@ export default function SignIn() {
             name="email"
             autoComplete="email"
             autoFocus
+            onChange={handleChange('email')}
+                value={email}
+                
+                error ={error ? true : false}
           />
           <TextField
             variant="outlined"
@@ -71,6 +155,10 @@ export default function SignIn() {
             type="password"
             id="password"
             autoComplete="current-password"
+            onChange={handleChange('password')}
+            value={password}
+            
+            error ={error ? true : false}
           />
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
@@ -82,9 +170,17 @@ export default function SignIn() {
             variant="contained"
             color="primary"
             className={classes.submit}
+            onClick={onSubmit}
           >
             Sign In
           </Button>
+          <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+          
+        <Alert onClose={handleClose} severity="success">
+          Signed in successfull!  {redirectUser()}
+        </Alert>
+         </Snackbar>
+         
           <Grid container>
             <Grid item xs>
               <Link href="#" variant="body2">
