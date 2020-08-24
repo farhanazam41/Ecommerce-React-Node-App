@@ -3,7 +3,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Menu from './Menu';
 import StickyFooter from './Footer';
-
+import {Divider} from 'semantic-ui-react';
 
 const useStyles = makeStyles((theme) => ({
     hero : {
@@ -19,6 +19,7 @@ const Layout = ({title='Title', description="Description", className, children})
     return (
        <div >
        <Menu/>
+       <Divider/>
         <div className='jumbotron jumbotron-fluid'>
         <h2>{title}</h2>
         <p className='lead'>{description}</p>

@@ -7,7 +7,9 @@ import {signOut, isAuthenticated} from '../auth/index';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import HomeIcon from '@material-ui/icons/Home';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
-import PersonIcon from '@material-ui/icons/Person';
+import StoreIcon from '@material-ui/icons/Store';
+import Grid from '@material-ui/core/Grid';
+
 
 const isActive = (history, path) => {
     if ( history.location.pathname === path ){
@@ -23,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
       flexGrow: 1,
     },
     menuButton: {
-      marginRight: theme.spacing(2.5),
+      marginRight: theme.spacing(1),
     },
     title: {
       flexGrow: 1,
@@ -39,26 +41,39 @@ const Menu =({history}) => {
     const classes = useStyles();
 
     return (
-      <AppBar position="static" >
+      
+      
+      <AppBar>
       <Toolbar>
       <Typography variant="h6" className={classes.title}>
-             E-Commerce App
+      <StoreIcon/>
+             App
           </Typography>
-          <HomeIcon/>
+          
       <Button className={classes.menuButton} component={Link} to='/' color='inherit' style={isActive(history,'/')} >
             Home
       </Button>
-      <DashboardIcon/>
-      <Button className={classes.menuButton}  component={Link} to='/dashboard' color='inherit' style={isActive(history,'/dashboard')} >
+      
+      {
+        isAuthenticated() && isAuthenticated().user.role === 0 && (
+          <Button className={classes.menuButton}  component={Link} to='/user/dashboard' color='inherit' style={isActive(history,'/user/dashboard')} >
             Dashboard
       </Button>
+        )
+      }
+      {
+        isAuthenticated() && isAuthenticated().user.role === 1 && (
+          <Button className={classes.menuButton}  component={Link} to='/admin/dashboard' color='inherit' style={isActive(history,'/admin/dashboard')} >
+            Dashboard
+      </Button>)
+      }
       {!isAuthenticated() && (
         <div>
-        <PersonAddIcon/>
+        
         <Button className={classes.menuButton}  component={Link} to='/signup' color='inherit' style={isActive(history,'/signup')}>
             Signup
       </Button>
-      <PersonIcon/>
+      
       <Button className={classes.menuButton}  component={Link} to='/signin' color='inherit' style={isActive(history,'/signin')}>
             Signin
       </Button>
@@ -74,14 +89,16 @@ const Menu =({history}) => {
       </Button>
         )
       }
-      <IconButton color='inherit' aira-label='account' >
-      <AccountCircle  />
+     
+      
       <Button className={classes.menuButton}  component={Link} to='/profile' color='inherit' style={isActive(history,'/profile')}>
             Profile
       </Button>
-      </IconButton>
+      
       </Toolbar>
       </AppBar>
+      
+      
     )
 
 }

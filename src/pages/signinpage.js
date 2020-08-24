@@ -15,7 +15,7 @@ import Container from '@material-ui/core/Container';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert'
 
-import {signin, authenticate} from '../auth';
+import {signin, authenticate, isAuthenticated} from '../auth';
 import { Redirect } from 'react-router-dom';
 
 function Alert(props) {
@@ -67,6 +67,8 @@ export default function SignIn() {
   };
 
   const {email,password,error,loading,redirectToReferrer} = values;
+  const {user} = isAuthenticated();
+
 
   const handleChange = name => event => {
     setValues({...values, error: false, [name]: event.target.value});
@@ -111,18 +113,26 @@ export default function SignIn() {
 
   const redirectUser = () => {
     if(redirectToReferrer) {
+      if(user && user.role === 1 ){
+        return <Redirect to ='/admin/dashboard'/>
+      }
+      else {
+        return <Redirect to ='/user/dashboard'/>
+       }
+    }
+    if(isAuthenticated()){
       return <Redirect to ='/'/>
     }
-  };
+    
+};
 
   return (
+    
     <Container component="main" maxWidth="xs">
-    {showError()}
-    {showLoading()}
-    
-    
       <CssBaseline />
       <div className={classes.paper}>
+      {showError()}
+      {showLoading()}
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
@@ -174,10 +184,11 @@ export default function SignIn() {
           >
             Sign In
           </Button>
+          {redirectUser()}
           <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
           
         <Alert onClose={handleClose} severity="success">
-          Signed in successfull!  {redirectUser()}
+          Signed in successfull!  
         </Alert>
          </Snackbar>
          

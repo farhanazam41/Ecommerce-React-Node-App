@@ -111,10 +111,11 @@ export default function SignUp() {
   return (
     
     <Container component="main" maxWidth="xs">
-    {showError()}
-    <showSuccess/>
+    
+    
       <CssBaseline />
       <div className={classes.paper}>
+      {showError()}
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
