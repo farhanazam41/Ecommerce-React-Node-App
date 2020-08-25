@@ -1,26 +1,14 @@
 import React, {useState, useEffect} from  'react';
 import Layout from '../core/Layout';
-import { Divider, Button, Form, Input,Image, Message, Header, Icon, TextArea, Select} from 'semantic-ui-react';
+import { Button, Form,Image, Header, Icon, Loader} from 'semantic-ui-react';
 import Grid from '@material-ui/core/Grid';
 import { isAuthenticated } from '../auth';
 import {createProduct, getCategories} from './apiAdmin';
-
 import {Link} from 'react-router-dom';
 
-const categoryOptions = [
-    { key: '0', value: '0', text: 'No' },
-    { key: '1', value: '1', text: 'Yes' },
-  ]
 
-
-  const shippingOptions = [
-    { key: '0', value: '0', text: 'No' },
-    { key: '1', value: '1', text: 'Yes' },
-  ]
 
 const AddProduct = () => {
-
-    const [photoPreview, setPhotoPreview] = useState('');
 
     const [values, setValues] = useState({
 
@@ -40,6 +28,10 @@ const AddProduct = () => {
 
     })
 
+    const [success, setSuccess] = useState(false);
+    const [photoPreview, setPhotoPreview] = useState('');
+    
+    
     const {
         name,
         description,
@@ -56,6 +48,11 @@ const AddProduct = () => {
 
     } = values;
 
+    
+   
+
+    
+
     const init =( ) => {
         getCategories().then(data => {
             if(data.error) {
@@ -67,23 +64,37 @@ const AddProduct = () => {
     };
 
     useEffect(() => {
-     
+        
         init();
     },[]) ;
+    
 
+    // const handleChange = name => event => {
+    //     // setPhotoPreview(window.URL.createObjectURL(event.target.files[0]))
+    //     const value = name === 'photo' ?event.target.files[0] : event.target.value;
+        
+    //     formData.set(name,value);
+
+    //     setValues({ ...values, [name] : value});
+    // }
     const handleChange = name => event => {
-        const value = name === 'photo' ? event.target.files[0] : event.target.value;
-        setPhotoPreview(window.URL.createObjectURL(event.target.files[0]))
+        // setPhotoPreview(window.URL.createObjectURL(event.target.files[0]))
+        const value = name === 'photo' ?  event.target.files[0] : event.target.value;
+        const pic = name === 'photo' ? setPhotoPreview(window.URL.createObjectURL(event.target.files[0])) : ''
         formData.set(name,value);
 
         setValues({ ...values, [name] : value});
+
+        console.log(values);
     }
+    
 
     const { user, token} = isAuthenticated();
 
     const clickSubmit = (event) => {
-
+       
        event.preventDefault();
+       setSuccess(false);
        setValues({...values, error:'', loading: true});
 
        createProduct(user._id, token, formData)
@@ -92,8 +103,11 @@ const AddProduct = () => {
                setValues({...values, error: data.error})
            }
            else{
-              setValues({...values, name:'', description:'',photo:'',price:'',quantity:'',loading:false,createdProduct: data.name});
+              setSuccess(true);
+              setValues({...values, name:'', description:'',photo:'',price:'',quantity:'',categories:[],shipping:'',loading:false,createdProduct: data.name});
+              setPhotoPreview('');
            }
+           
        });
     };
 
@@ -106,7 +120,9 @@ const AddProduct = () => {
     <Icon name='add'  />
       Create New Product
       </Header>
+      
       <form className="mb-3" onSubmit={clickSubmit}>
+      
             <h4>Post Photo</h4>
             <div className="form-group">
                 <label className="btn btn-secondary">
@@ -155,25 +171,43 @@ const AddProduct = () => {
                 <label className="text-muted">Quantity</label>
                 <input onChange={handleChange('quantity')} type="number" className="form-control" value={quantity} />
             </div>
-
             <Form.Field
-    control={Button}
-   
-    color='blue'
-    icon='pencil alternate'
-    content="Create Product"
-    type='submit'
-    
-    />
+            control={Button}
+            disabled={values.name && values.description && values.price  ? false : true}
+            color='blue'
+            icon='pencil alternate'
+            content="Create Category"
+            type='submit'
+            />
         </form>
+        
       </Grid>
           </Grid>
   )
 
+  const showError =() => (
+      <div className='alert alert-danger' style={{display: error ? '' : 'none'}}>{error}</div>
+  )
+
+  const showSuccess = () => {
+    if(success) {
+       return <div className='alert alert-info'>Product created</div>
+    }
+}
+const showLoading =() => 
+    loading && (
+      <Loader active >Loading...</Loader>
+    )
+
+ 
     return (
         <Layout title='Add Product' description={`Welcome ${user.name}. Add New Product here`}>
-        
+          
+          {showLoading()}
+          {showSuccess()}
+          {showError()}
           {newPostForm()}
+          
         </Layout>
     )
 }

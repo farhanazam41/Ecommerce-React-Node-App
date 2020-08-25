@@ -29,7 +29,7 @@ const AddCategory = () => {
       
       setError('');
       setValues ({values, [name]: event.target.value});
-      console.log(name);
+      
   }
 
   const onSubmitChange  = (e) => {

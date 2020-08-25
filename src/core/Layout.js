@@ -20,7 +20,7 @@ const Layout = ({title='Title', description="Description", className, children})
        <div >
        <Menu/>
        <Divider/>
-        <div className='jumbotron jumbotron-fluid'>
+        <div className='jumbotron '>
         <h2>{title}</h2>
         <p className='lead'>{description}</p>
         </div>

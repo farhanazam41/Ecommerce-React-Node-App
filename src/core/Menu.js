@@ -53,6 +53,9 @@ const Menu =({history}) => {
       <Button className={classes.menuButton} component={Link} to='/' color='inherit' style={isActive(history,'/')} >
             Home
       </Button>
+      <Button className={classes.menuButton} component={Link} to='/shop' color='inherit' style={isActive(history,'/shop')} >
+            Shop
+      </Button>
       
       {
         isAuthenticated() && isAuthenticated().user.role === 0 && (
